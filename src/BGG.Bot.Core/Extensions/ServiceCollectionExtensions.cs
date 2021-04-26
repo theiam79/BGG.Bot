@@ -15,6 +15,7 @@ namespace BGG.Bot.Core.Extensions
     {
       services.AddHttpClient<BggQueryService>()//.AddPolicyHandler()
         ;
+      services.AddHttpClient<CollectionService>();
       return services;
     }
   }

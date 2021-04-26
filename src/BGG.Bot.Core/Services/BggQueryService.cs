@@ -10,6 +10,8 @@ using BGG.Bot.Core.Models.Search;
 using Microsoft.Extensions.Logging;
 using Polly.Registry;
 using BGG.Bot.Core.Models.Thing;
+using BGG.Bot.Core.Models.User;
+using BGG.Bot.Core.Models.Collection;
 
 namespace BGG.Bot.Core.Services
 {
@@ -53,6 +55,30 @@ namespace BGG.Bot.Core.Services
 
       var results = serializer.Deserialize(response) as ThingResult;
       return results.Things?[0] ?? null;
+    }
+
+    public async Task<BggCollection> GetBggCollectionAsync(string username)
+    {
+      var queryParams = new Dictionary<string, string>() { { "username", username }, { "excludesubtype","boardgameexpansion" } };
+      var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/collection", queryParams));
+
+      var response = await _httpClient.GetStreamAsync(url);
+      var serializer = new XmlSerializer(typeof(BggCollection));
+
+      var result = serializer.Deserialize(response) as BggCollection;
+      return result;
+    }
+
+    public async Task<bool> ValidUser(string username)
+    {
+      var queryParams = new Dictionary<string, string>() { { "name", username } };
+      var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/user", queryParams));
+
+      var response = await _httpClient.GetStreamAsync(url);
+      var serializer = new XmlSerializer(typeof(BggUser));
+
+      var result = serializer.Deserialize(response) as BggUser;
+      return !string.IsNullOrEmpty(result.Id);
     }
   }
 }

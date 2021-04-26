@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace BGG.Bot.Data.Models
   {
     public int UserId { get; set; }
     public User User { get; set; }
-    public int CollectionItemId { get; set; }
+    public int BggId{ get; set; }
     public CollectionItem CollectionItem { get; set; }
     public bool Owned { get; set; } = false;
     public bool PreviouslyOwned { get; set; } = false;

@@ -17,7 +17,17 @@ namespace BGG.Bot.Data.Context
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-      modelBuilder.Entity<UserCollectionItem>().HasKey(uci => new { uci.UserId, uci.CollectionItemId });
+      modelBuilder.Entity<UserCollectionItem>().HasKey(uci => new { uci.UserId, uci.BggId });
+
+      //modelBuilder.Entity<CollectionItem>().HasMany<UserCollectionItem>(ci => ci.UserCollectionItems).WithMany(uci => uci.).HasForeignKey(f => f.BggId).HasPrincipalKey(f => f.BggId);
+      modelBuilder.Entity<UserCollectionItem>()
+        .HasOne(uci => uci.CollectionItem)
+        .WithMany(ci => ci.UserCollectionItems)
+        .HasForeignKey(uci => uci.BggId)
+        .HasPrincipalKey(ci => ci.BggId);
+
+      modelBuilder.Entity<CollectionItem>()
+        .HasAlternateKey(ci => ci.BggId);
     }
   }
 }

@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace BGG.Bot.Core.Models.Collection
 {
 	[XmlRoot("items")]
-	public class Collection
+	public class BggCollection
 	{
 		[XmlAttribute("totalitems")]
 		public int TotalItems { get; set; }
@@ -17,6 +17,6 @@ namespace BGG.Bot.Core.Models.Collection
 		[XmlAttribute("pubdate")]
 		public string PubDate { get; set; }
 		[XmlElement("item")]
-		public CollectionItem[] CollectionItems { get; set; }
+		public BggCollectionItem[] CollectionItems { get; set; }
 	}
 }

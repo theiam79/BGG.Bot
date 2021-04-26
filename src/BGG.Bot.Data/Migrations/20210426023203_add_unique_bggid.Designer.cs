@@ -3,14 +3,16 @@ using System;
 using BGG.Bot.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BGG.Bot.Data.Migrations
 {
     [DbContext(typeof(CollectionContext))]
-    partial class CollectionContextModelSnapshot : ModelSnapshot
+    [Migration("20210426023203_add_unique_bggid")]
+    partial class add_unique_bggid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,9 @@ namespace BGG.Bot.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("CollectionItemId");
+
+                    b.HasIndex("BggId")
+                        .IsUnique();
 
                     b.ToTable("CollectionItems");
                 });
@@ -55,7 +60,7 @@ namespace BGG.Bot.Data.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("BggId")
+                    b.Property<int>("CollectionItemId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("ForTrade")
@@ -85,9 +90,9 @@ namespace BGG.Bot.Data.Migrations
                     b.Property<bool>("WishList")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("UserId", "BggId");
+                    b.HasKey("UserId", "CollectionItemId");
 
-                    b.HasIndex("BggId");
+                    b.HasIndex("CollectionItemId");
 
                     b.ToTable("UserCollectionItem");
                 });
@@ -96,8 +101,7 @@ namespace BGG.Bot.Data.Migrations
                 {
                     b.HasOne("BGG.Bot.Data.Models.CollectionItem", "CollectionItem")
                         .WithMany("UserCollectionItems")
-                        .HasForeignKey("BggId")
-                        .HasPrincipalKey("BggId")
+                        .HasForeignKey("CollectionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

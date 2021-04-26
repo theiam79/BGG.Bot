@@ -7,8 +7,10 @@ using System.Xml.Serialization;
 
 namespace BGG.Bot.Core.Models.Collection
 {
-	public class CollectionItem
+	public class BggCollectionItem
 	{
+		[XmlAttribute("objectid")]
+		public int BggId { get; set; }
 		[XmlElement("name")]
 		public string Name { get; set; }
 		[XmlElement("yearpublished")]

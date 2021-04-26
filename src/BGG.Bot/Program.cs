@@ -20,7 +20,11 @@ namespace BGG.Bot
   {
     public static async Task Main(string[] args)
     {
-      await CreateHostBuilder(args).Build().MigrateDatabase<CollectionContext>().RunAsync();
+      var host = CreateHostBuilder(args).Build();
+      using (host)
+      {
+        await host.MigrateDatabase<CollectionContext>().RunAsync();
+      }
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -49,7 +53,7 @@ namespace BGG.Bot
                 .AddDbContext<CollectionContext>(options =>
                 {
                   options.UseSqlite(hostContext.Configuration.GetConnectionString("CollectionDB"));
-                })
+                }, ServiceLifetime.Transient, ServiceLifetime.Transient)
                 .AddBgg();
             });
 
