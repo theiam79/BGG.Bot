@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BGG.Bot.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class change_fk_to_bggid : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,6 +19,7 @@ namespace BGG.Bot.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CollectionItems", x => x.CollectionItemId);
+                    table.UniqueConstraint("AK_CollectionItems_BggId", x => x.BggId);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,7 +41,7 @@ namespace BGG.Bot.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CollectionItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BggId = table.Column<int>(type: "INTEGER", nullable: false),
                     Owned = table.Column<bool>(type: "INTEGER", nullable: false),
                     PreviouslyOwned = table.Column<bool>(type: "INTEGER", nullable: false),
                     ForTrade = table.Column<bool>(type: "INTEGER", nullable: false),
@@ -53,12 +54,12 @@ namespace BGG.Bot.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCollectionItem", x => new { x.UserId, x.CollectionItemId });
+                    table.PrimaryKey("PK_UserCollectionItem", x => new { x.UserId, x.BggId });
                     table.ForeignKey(
-                        name: "FK_UserCollectionItem_CollectionItems_CollectionItemId",
-                        column: x => x.CollectionItemId,
+                        name: "FK_UserCollectionItem_CollectionItems_BggId",
+                        column: x => x.BggId,
                         principalTable: "CollectionItems",
-                        principalColumn: "CollectionItemId",
+                        principalColumn: "BggId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserCollectionItem_Users_UserId",
@@ -69,9 +70,9 @@ namespace BGG.Bot.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserCollectionItem_CollectionItemId",
+                name: "IX_UserCollectionItem_BggId",
                 table: "UserCollectionItem",
-                column: "CollectionItemId");
+                column: "BggId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
