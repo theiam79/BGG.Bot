@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BGG.Bot
 {
-  public static class Program
+  public class Program
   {
     public static async Task Main(string[] args)
     {
@@ -53,6 +53,11 @@ namespace BGG.Bot
                 .AddBgg();
             });
 
+
+  }
+
+  public static class HostExtensions
+  {
     public static IHost MigrateDatabase<T>(this IHost host) where T : DbContext
     {
       using (var scope = host.Services.CreateScope())

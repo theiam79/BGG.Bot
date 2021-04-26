@@ -14,6 +14,10 @@ namespace BGG.Bot.Data.Context
 
     public DbSet<User> Users { get; set; }
     public DbSet<CollectionItem> CollectionItems { get; set; }
-    public DbSet<UserCollectionItem> UserCollectionItems { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<UserCollectionItem>().HasKey(uci => new { uci.UserId, uci.CollectionItemId });
+    }
   }
 }
