@@ -69,6 +69,7 @@ namespace BGG.Bot.Modules
       var sb = new StringBuilder()
         .AppendLine($"Found {users.Count} registered collections")
         .AppendJoin(Environment.NewLine, users.Select(u => $"<@{u.DiscordId}> - {u.BggUsername}"));
+      await ReplyAsync(sb.ToString());
     }
 
     async Task Respond(CommandResult result)
