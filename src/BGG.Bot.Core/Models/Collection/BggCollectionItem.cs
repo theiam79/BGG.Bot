@@ -19,8 +19,10 @@ namespace BGG.Bot.Core.Models.Collection
 		public string Image { get; set; }
 		[XmlElement("thumbnail")]
 		public string Thumbnail { get; set; }
+		[XmlElement("stats")]
+		public BggCollectionItemStats BggCollectionItemStats { get; set; }
 		[XmlElement("status")]
-		public CollectionItemStatus CollectionItemStatus { get; set; }
+		public BggCollectionItemStatus CollectionItemStatus { get; set; }
 		[XmlElement("numplays")]
 		public int NumPlays { get; set; }
 	}

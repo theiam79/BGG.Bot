@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace BGG.Bot.Core.Models.Collection
 {
-	public class CollectionItemStatus
+	public class BggCollectionItemStatus
 	{
 		[XmlAttribute("own")]
 		public bool Own { get; set; }
@@ -23,6 +23,8 @@ namespace BGG.Bot.Core.Models.Collection
 		public bool WantToBuy { get; set; }
 		[XmlAttribute("wishlist")]
 		public bool Wishlist { get; set; }
+		[XmlAttribute("wishlistpriority")]
+		public int WishlistPriority { get; set; } = 0;
 		[XmlAttribute("preordered")]
 		public bool Preordered { get; set; }
 		[XmlAttribute("lastmodified")]

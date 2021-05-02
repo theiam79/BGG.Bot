@@ -59,7 +59,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<BggCollection> GetBggCollectionAsync(string username)
     {
-      var queryParams = new Dictionary<string, string>() { { "username", username }, { "excludesubtype","boardgameexpansion" } };
+      var queryParams = new Dictionary<string, string>() { { "username", username }, { "excludesubtype", "boardgameexpansion" }, { "stats", "1" } };
       var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/collection", queryParams));
 
       var response = await _httpClient.GetStreamAsync(url);

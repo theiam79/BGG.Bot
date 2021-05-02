@@ -20,7 +20,19 @@ namespace BGG.Bot.Data.Models
     public bool WantToPlay { get; set; } = false;
     public bool WantToBuy { get; set; } = false;
     public bool WishList { get; set; } = false;
+    public WishlistPriority WishlistPriority { get; set; } = WishlistPriority.None;
     public bool PreOrdered { get; set; } = false;
+    public float Rating { get; set; }
     public DateTime LastModified { get; set; }
+  }
+
+  public enum WishlistPriority
+  {
+    None = 0,
+    MustHave = 1,
+    LoveToHave = 2,
+    LikeToHave = 3,
+    ThinkingAboutIt = 4,
+    DontBuy = 5
   }
 }
