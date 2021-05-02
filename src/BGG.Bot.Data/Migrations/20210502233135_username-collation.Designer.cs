@@ -3,14 +3,16 @@ using System;
 using BGG.Bot.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BGG.Bot.Data.Migrations
 {
     [DbContext(typeof(CollectionContext))]
-    partial class CollectionContextModelSnapshot : ModelSnapshot
+    [Migration("20210502233135_username-collation")]
+    partial class usernamecollation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

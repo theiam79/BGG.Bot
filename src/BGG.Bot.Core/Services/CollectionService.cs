@@ -32,7 +32,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> Register(ulong discordId, string bggUsername)
     {
-      if (await _collectionContext.Users.AnyAsync(u => string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase)))
+      if (await _collectionContext.Users.AnyAsync(u => u.BggUsername == bggUsername))
       {
         return new CommandResult(false, $"{bggUsername} has already been registered");
       }
@@ -57,7 +57,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> UpdateCollection(ulong discordId, string bggUsername)
     {
-      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase));
+      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
       if (registeredUser == null)
       {
         return new CommandResult(false, $"{bggUsername} is not currently registered");
@@ -105,7 +105,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> Unregister(ulong discordId, string bggUsername)
     {
-      var registeredCollection = await _collectionContext.Users.FirstOrDefaultAsync(u => u.DiscordId == discordId && string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase));
+      var registeredCollection = await _collectionContext.Users.FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
       if (registeredCollection == null)
       {
         return new CommandResult(false, $"{bggUsername} is not currently registered");

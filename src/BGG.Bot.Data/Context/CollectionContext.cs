@@ -30,6 +30,9 @@ namespace BGG.Bot.Data.Context
       modelBuilder.Entity<CollectionItem>()
         .HasAlternateKey(ci => ci.BggId);
 
+      modelBuilder.Entity<User>()
+        .Property(u => u.BggUsername)
+        .UseCollation("NOCASE");
       //modelBuilder.Entity<User>()
       //  .HasMany(u => u.UserCollectionItems)
       //  .WithOne(u => u.User)
