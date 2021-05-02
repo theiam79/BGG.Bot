@@ -19,6 +19,15 @@ namespace BGG.Bot.Modules
       _collectionService = collectionService;
     }
 
+    [Command("force-register")]
+    [Summary("Force register a collection for a specified user")]
+    [RequireOwner]
+    public async Task ForceRegister(ulong discordId, [Remainder] string bggUsername)
+    {
+      var result = await _collectionService.Register(discordId, bggUsername);
+      await Respond(result);
+    }
+
     [Command("register")]
     [Summary("Register your collection to enable bot functionality")]
     public async Task Register([Remainder] string bggUsername)
@@ -27,7 +36,16 @@ namespace BGG.Bot.Modules
       await Respond(result);
     }
 
-    [Command("Unregister")]
+    [Command("force-unregister")]
+    [Summary("Force unregister a collection for a specified user")]
+    [RequireOwner]
+    public async Task ForceUnregister(ulong discordId, [Remainder] string bggUsername)
+    {
+      var result = await _collectionService.Unregister(discordId, bggUsername);
+      await Respond(result);
+    }
+
+    [Command("unregister")]
     [Summary("Unregister your collection to disable bot functionality")]
     public async Task Unregister([Remainder] string bggUsername)
     {
@@ -41,6 +59,16 @@ namespace BGG.Bot.Modules
     {
       var result = await _collectionService.UpdateCollection(Context.User.Id, bggUsername);
       await Respond(result);
+    }
+
+    [Command("list")]
+    [Summary("List all registered collections")]
+    public async Task ListCollections()
+    {
+      var users = await _collectionService.GetCollections();
+      var sb = new StringBuilder()
+        .AppendLine($"Found {users.Count} registered collections")
+        .AppendJoin(Environment.NewLine, users.Select(u => $"<@{u.DiscordId}> - {u.BggUsername}"));
     }
 
     async Task Respond(CommandResult result)

@@ -32,7 +32,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> Register(ulong discordId, string bggUsername)
     {
-      if (await _collectionContext.Users.AnyAsync(u => u.BggUsername == bggUsername))
+      if (await _collectionContext.Users.AnyAsync(u => string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase)))
       {
         return new CommandResult(false, $"{bggUsername} has already been registered");
       }
@@ -57,7 +57,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> UpdateCollection(ulong discordId, string bggUsername)
     {
-      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
+      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase));
       if (registeredUser == null)
       {
         return new CommandResult(false, $"{bggUsername} is not currently registered");
@@ -80,6 +80,11 @@ namespace BGG.Bot.Core.Services
       //return new CommandResult(true, $"Successfully updated {bggUsername} - collection contained {bggCollection.TotalItems} games");
     }
 
+    public async Task<List<User>> GetCollections()
+    {
+      return await _collectionContext.Users.OrderBy(u => u.DiscordId).ThenBy(u => u.BggUsername).ToListAsync();
+    }
+
     public async Task<CommandResult> UpdateCollection(User registeredUser)
     {
       var bggCollection = await _bgg.GetBggCollectionAsync(registeredUser.BggUsername);
@@ -100,7 +105,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> Unregister(ulong discordId, string bggUsername)
     {
-      var registeredCollection = await _collectionContext.Users.FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
+      var registeredCollection = await _collectionContext.Users.FirstOrDefaultAsync(u => u.DiscordId == discordId && string.Equals(u.BggUsername, bggUsername, StringComparison.InvariantCultureIgnoreCase));
       if (registeredCollection == null)
       {
         return new CommandResult(false, $"{bggUsername} is not currently registered");
