@@ -1,7 +1,9 @@
-﻿using Discord;
+﻿using BGG.Bot.Models;
+using Discord;
 using Discord.Addons.Hosting;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +19,14 @@ namespace BGG.Bot.Services
     private readonly IServiceProvider _services;
     private readonly DiscordSocketClient _client;
     private readonly CommandService _commandService;
+    private readonly BotOptions _botOptions;
 
-    public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService)
+    public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, IOptions<BotOptions> botOptions)
     {
       _services = services;
       _client = client;
       _commandService = commandService;
+      _botOptions = botOptions.Value;
 
       _client.MessageReceived += HandleCommandAsync;
       _commandService.CommandExecuted += CommandExecutedAsync;
@@ -41,7 +45,7 @@ namespace BGG.Bot.Services
       int argPos = 0;
       if (!(incomingMessage.Channel is SocketDMChannel))
       {
-        if (!message.HasStringPrefix("$", ref argPos) && !message.HasMentionPrefix(_client.CurrentUser, ref argPos)) return;
+        if (!message.HasStringPrefix(_botOptions.CommandPrefix, ref argPos) && !message.HasMentionPrefix(_client.CurrentUser, ref argPos)) return;
       }
 
       var context = new SocketCommandContext(_client, message);

@@ -48,11 +48,55 @@ namespace BGG.Bot.Core.Services
 
       var userCollectionItems = _mapper.Map<List<UserCollectionItem>>(bggCollection.BggCollectionItems.Unique());
       var newUser = new User { DiscordId = discordId, BggUsername = bggUsername, UserCollectionItems = userCollectionItems };
+
       await _collectionContext.Users.AddAsync(newUser);
       await _collectionContext.SaveChangesAsync();
 
       return new CommandResult(true, $"Successfully registered {bggUsername} - collection contained {bggCollection.TotalItems} games");
     }
+
+    public async Task<CommandResult> UpdateCollection(ulong discordId, string bggUsername)
+    {
+      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
+      if (registeredUser == null)
+      {
+        return new CommandResult(false, $"{bggUsername} is not currently registered");
+      }
+
+      return await UpdateCollection(registeredUser);
+
+      //var bggCollection = await _bgg.GetBggCollectionAsync(bggUsername);
+
+      //await AddMissingGames(bggCollection.BggCollectionItems);
+
+      //var userCollectionItems = _mapper.Map<List<UserCollectionItem>>(bggCollection.BggCollectionItems.Unique());
+
+      //_collectionContext.UserCollectionItem.RemoveRange(registeredUser.UserCollectionItems);
+
+      //registeredUser.UserCollectionItems = userCollectionItems;
+      //_collectionContext.Users.Update(registeredUser);
+      //await _collectionContext.SaveChangesAsync();
+
+      //return new CommandResult(true, $"Successfully updated {bggUsername} - collection contained {bggCollection.TotalItems} games");
+    }
+
+    public async Task<CommandResult> UpdateCollection(User registeredUser)
+    {
+      var bggCollection = await _bgg.GetBggCollectionAsync(registeredUser.BggUsername);
+
+      await AddMissingGames(bggCollection.BggCollectionItems);
+
+      var userCollectionItems = _mapper.Map<List<UserCollectionItem>>(bggCollection.BggCollectionItems.Unique());
+
+      _collectionContext.UserCollectionItem.RemoveRange(registeredUser.UserCollectionItems);
+
+      registeredUser.UserCollectionItems = userCollectionItems;
+      _collectionContext.Users.Update(registeredUser);
+      await _collectionContext.SaveChangesAsync();
+
+      return new CommandResult(true, $"Successfully updated {registeredUser.BggUsername} - collection contained {registeredUser.UserCollectionItems.Count} games");
+    }
+
 
     public async Task<CommandResult> Unregister(ulong discordId, string bggUsername)
     {
@@ -92,7 +136,7 @@ namespace BGG.Bot.Core.Services
          .Include(ci => ci.UserCollectionItems)
          .ThenInclude(uci => uci.User)
          .Where(ci => ci.BggId == bggId)
-         .SelectMany(ci => ci.UserCollectionItems.Where(uci => uci.WantToPlay).Select(uci => uci.User))
+         .SelectMany(ci => ci.UserCollectionItems.Where(uci => uci.WantToPlay || uci.Rating >= 7).Select(uci => uci.User))
          .ToListAsync();
     }
   }

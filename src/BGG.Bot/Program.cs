@@ -13,6 +13,9 @@ using BGG.Bot.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using BGG.Bot.Models;
+using Serilog;
+using Serilog.Events;
 
 namespace BGG.Bot
 {
@@ -29,6 +32,23 @@ namespace BGG.Bot
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+            .UseSerilog((context,config) =>
+            {
+              config
+                .WriteTo.Console()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error);
+
+              if (!string.IsNullOrEmpty(context.Configuration["sentry"]))
+              {
+                config.WriteTo.Sentry(o =>
+                {
+                  o.Dsn = context.Configuration["sentry"];
+                  o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
+                  o.MinimumEventLevel = LogEventLevel.Error;
+                });
+              }
+            })
             .ConfigureDiscordHost<DiscordSocketClient>((context, config) =>
             {
               config.SocketConfig = new DiscordSocketConfig
@@ -48,16 +68,16 @@ namespace BGG.Bot
             .ConfigureServices((hostContext, services) =>
             {
               services
+                .Configure<BotOptions>(hostContext.Configuration.GetSection("BotOptions"))
                 .AddHostedService<CommandHandler>()
                 .AddSingleton<InteractiveService>()
+                .AddSingleton<HelperService>()
                 .AddDbContext<CollectionContext>(options =>
                 {
                   options.UseSqlite(hostContext.Configuration.GetConnectionString("CollectionDB"));
                 }, ServiceLifetime.Transient, ServiceLifetime.Transient)
                 .AddBgg();
             });
-
-
   }
 
   public static class HostExtensions

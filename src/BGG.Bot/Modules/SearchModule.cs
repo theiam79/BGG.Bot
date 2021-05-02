@@ -24,9 +24,10 @@ namespace BGG.Bot.Modules
     }
 
     [Command("game")]
-    public async Task Search([Remainder] string searchTerm)
+    [Summary("Search BGG for a game")]
+    public async Task Search([Remainder] string game)
     {
-      var results = await _bgg.Search(searchTerm);
+      var results = await _bgg.Search(game);
       var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
 
       if (selection != null)
@@ -56,21 +57,21 @@ namespace BGG.Bot.Modules
     }
 
     [Command("owner")]
-    [Summary("Find any players that own the specified game")]
-    public async Task Owns([Remainder] string searchTerm)
+    [Summary("Find any players that own a specified game")]
+    public async Task Owns([Remainder] string game)
     {
-      var results = await _bgg.Search(searchTerm);
+      var results = await _bgg.Search(game);
       var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
 
-      var result = await _collectionService.FindOwners(selection.Result.Id);
+      var result = (await _collectionService.FindOwners(selection.Result.Id)).GroupBy(u => u.DiscordId).Select(g => g.Key).ToList();
 
       var message = "Found no registered owners";
 
       if (result.Any())
       { 
         message = new StringBuilder()
-          .AppendLine($"Found {result.Count} registered owners:")
-          .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r.DiscordId}>"))
+          .AppendLine($"Found {result.Count} registered owner(s):")
+          .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
           .ToString();
       }
 
@@ -78,21 +79,21 @@ namespace BGG.Bot.Modules
     }
 
     [Command("player")]
-    [Summary("Find any players that want to play the specified game")]
-    public async Task Plays([Remainder] string searchTerm)
+    [Summary("Find any players that want to play a specified game")]
+    public async Task Plays([Remainder] string game)
     {
-      var results = await _bgg.Search(searchTerm);
+      var results = await _bgg.Search(game);
       var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
 
-      var result = await _collectionService.FindPlayers(selection.Result.Id);
+      var result = (await _collectionService.FindPlayers(selection.Result.Id)).GroupBy(u => u.DiscordId).Select(g => g.Key).ToList();
 
       var message = "Found no registered owners";
 
       if (result.Any())
       {
         message = new StringBuilder()
-          .AppendLine($"Found {result.Count} people interested in playing:")
-          .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r.DiscordId}>"))
+          .AppendLine($"Found {result.Count} potential player(s):")
+          .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
           .ToString();
       }
 

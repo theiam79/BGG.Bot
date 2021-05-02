@@ -1,4 +1,5 @@
-﻿using BGG.Bot.Core.Services;
+﻿using BGG.Bot.Core.Models;
+using BGG.Bot.Core.Services;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,7 @@ namespace BGG.Bot.Modules
     public async Task Register([Remainder] string bggUsername)
     {
       var result = await _collectionService.Register(Context.User.Id, bggUsername);
-      var responseMessage = result.Success ? result.Message : $"Failed to register collection: {result.Message}";
-      if (!string.IsNullOrEmpty(responseMessage))
-      {
-        await ReplyAsync(responseMessage);
-      }
+      await Respond(result);
     }
 
     [Command("Unregister")]
@@ -35,6 +32,19 @@ namespace BGG.Bot.Modules
     public async Task Unregister([Remainder] string bggUsername)
     {
       var result = await _collectionService.Unregister(Context.User.Id, bggUsername);
+      await Respond(result);
+    }
+
+    [Command("update")]
+    [Summary("Forces an update of your collection items")]
+    public async Task Update([Remainder] string bggUsername)
+    {
+      var result = await _collectionService.UpdateCollection(Context.User.Id, bggUsername);
+      await Respond(result);
+    }
+
+    async Task Respond(CommandResult result)
+    {
       var responseMessage = result.Success ? result.Message : $"Failed to register collection: {result.Message}";
       if (!string.IsNullOrEmpty(responseMessage))
       {

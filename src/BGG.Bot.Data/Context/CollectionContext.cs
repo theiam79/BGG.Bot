@@ -14,6 +14,7 @@ namespace BGG.Bot.Data.Context
 
     public DbSet<User> Users { get; set; }
     public DbSet<CollectionItem> CollectionItems { get; set; }
+    public DbSet<UserCollectionItem> UserCollectionItem { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
