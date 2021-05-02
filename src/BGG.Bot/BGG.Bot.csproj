@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BGG.Bot.Core\BGG.Bot.Core.csproj" />
     <ProjectReference Include="..\BGG.Bot.Data\BGG.Bot.Data.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
 </Project>

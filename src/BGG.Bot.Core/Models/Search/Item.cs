@@ -13,7 +13,7 @@ namespace BGG.Bot.Core.Models.Search
     public string Type;
 
     [XmlAttribute("id")]
-    public string Id;
+    public int Id;
 
     [XmlElement("name")]
     public Name Name;

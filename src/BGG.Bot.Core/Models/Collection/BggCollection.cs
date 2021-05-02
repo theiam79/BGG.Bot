@@ -17,6 +17,6 @@ namespace BGG.Bot.Core.Models.Collection
 		[XmlAttribute("pubdate")]
 		public string PubDate { get; set; }
 		[XmlElement("item")]
-		public BggCollectionItem[] CollectionItems { get; set; }
+		public BggCollectionItem[] BggCollectionItems { get; set; }
 	}
 }

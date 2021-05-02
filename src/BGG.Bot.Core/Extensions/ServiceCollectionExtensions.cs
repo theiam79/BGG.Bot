@@ -15,7 +15,8 @@ namespace BGG.Bot.Core.Extensions
     {
       services.AddHttpClient<BggQueryService>()//.AddPolicyHandler()
         ;
-      services.AddHttpClient<CollectionService>();
+      services.AddTransient<CollectionService>();
+      services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
       return services;
     }
   }

@@ -45,9 +45,9 @@ namespace BGG.Bot.Core.Services
       return results.Items.ToList();
     }
 
-    public async Task<Thing> GetThing(string id)
+    public async Task<Thing> GetThing(int id)
     {
-      var queryParams = new Dictionary<string, string>() { { "id", id } };
+      var queryParams = new Dictionary<string, string>() { { "id", id.ToString() } };
       var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/thing", queryParams));
 
       var response = await _httpClient.GetStreamAsync(url);

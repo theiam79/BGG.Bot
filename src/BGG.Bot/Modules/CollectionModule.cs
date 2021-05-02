@@ -22,7 +22,24 @@ namespace BGG.Bot.Modules
     [Summary("Register your collection to enable bot functionality")]
     public async Task Register([Remainder] string bggUsername)
     {
-      await _collectionService.Register(Context.User.Id, bggUsername);
+      var result = await _collectionService.Register(Context.User.Id, bggUsername);
+      var responseMessage = result.Success ? result.Message : $"Failed to register collection: {result.Message}";
+      if (!string.IsNullOrEmpty(responseMessage))
+      {
+        await ReplyAsync(responseMessage);
+      }
+    }
+
+    [Command("Unregister")]
+    [Summary("Unregister your collection to disable bot functionality")]
+    public async Task Unregister([Remainder] string bggUsername)
+    {
+      var result = await _collectionService.Unregister(Context.User.Id, bggUsername);
+      var responseMessage = result.Success ? result.Message : $"Failed to register collection: {result.Message}";
+      if (!string.IsNullOrEmpty(responseMessage))
+      {
+        await ReplyAsync(responseMessage);
+      }
     }
   }
 }
