@@ -82,7 +82,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<List<User>> GetCollections()
     {
-      return await _collectionContext.Users.OrderBy(u => u.DiscordId).ThenBy(u => u.BggUsername).ToListAsync();
+      return await _collectionContext.Users.OrderBy(u => u.BggUsername).ToListAsync();
     }
 
     public async Task<CommandResult> UpdateCollection(User registeredUser)
