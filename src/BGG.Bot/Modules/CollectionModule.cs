@@ -61,6 +61,14 @@ namespace BGG.Bot.Modules
       await Respond(result);
     }
 
+    [Command("update-played")]
+    [Summary("Forces an update of your played items")]
+    public async Task UpdatePlayed([Remainder] string bggUsername)
+    {
+      var result = await _collectionService.UpdatePlayedGames(Context.User.Id, bggUsername);
+      await Respond(result);
+    }
+
     [Command("list")]
     [Summary("List all registered collections")]
     public async Task ListCollections()
