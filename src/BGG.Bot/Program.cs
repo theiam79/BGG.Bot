@@ -16,6 +16,8 @@ using Microsoft.Extensions.Logging;
 using BGG.Bot.Models;
 using Serilog;
 using Serilog.Events;
+using Octokit;
+using System.Reflection;
 
 namespace BGG.Bot
 {
@@ -72,6 +74,7 @@ namespace BGG.Bot
                 .AddHostedService<CommandHandler>()
                 .AddSingleton<InteractiveService>()
                 .AddSingleton<HelperService>()
+                .AddTransient<IGitHubClient>(s => new GitHubClient(new ProductHeaderValue(Assembly.GetEntryAssembly().GetName().Name)) { Credentials = new Credentials(hostContext.Configuration["github_token"]) })
                 .AddDbContext<CollectionContext>(options =>
                 {
                   options.UseSqlite(hostContext.Configuration.GetConnectionString("CollectionDB"));
