@@ -44,7 +44,7 @@ namespace BGG.Bot.Modules
     {
       var issues = await _gitHubClient.Issue.GetAllForRepository(361060222);
 
-      var description = new StringBuilder().AppendJoin(Environment.NewLine, issues.Select(i => Format.Url(i.Title, i.Url))).ToString();
+      var description = new StringBuilder().AppendJoin(Environment.NewLine, issues.Select(i => Format.Url(i.Title, i.HtmlUrl))).ToString();
 
       var embed = new EmbedBuilder()
         .WithTitle($"There are {issues.Count} open issues")
