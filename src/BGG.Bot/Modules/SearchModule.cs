@@ -70,7 +70,7 @@ namespace BGG.Bot.Modules
       if (result.Any())
       { 
         message = new StringBuilder()
-          .AppendLine($"Found {result.Count} registered owner(s) of {selection.Result.Name}:")
+          .AppendLine($"Found {result.Count} registered owner(s) of {selection.Result.Name.Value}:")
           .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
           .ToString();
       }
@@ -92,7 +92,7 @@ namespace BGG.Bot.Modules
       if (result.Any())
       {
         message = new StringBuilder()
-          .AppendLine($"Found {result.Count} potential player(s) for {selection.Result.Name}:")
+          .AppendLine($"Found {result.Count} potential player(s) for {selection.Result.Name.Value}:")
           .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
           .ToString();
       }
