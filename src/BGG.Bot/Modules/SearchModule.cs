@@ -87,7 +87,7 @@ namespace BGG.Bot.Modules
 
       var result = (await _collectionService.FindPlayers(selection.Result.Id)).GroupBy(u => u.DiscordId).Select(g => g.Key).ToList();
 
-      var message = "Found no registered owners";
+      var message = "Found no registered players";
 
       if (result.Any())
       {
