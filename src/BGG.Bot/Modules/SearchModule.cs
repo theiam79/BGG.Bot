@@ -58,7 +58,7 @@ namespace BGG.Bot.Modules
 
     [Command("owner")]
     [Summary("Find any players that own a specified game")]
-    public async Task Owns([Remainder] string game)
+    public async Task Owner([Remainder] string game)
     {
       var results = await _bgg.Search(game);
       var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
@@ -80,7 +80,7 @@ namespace BGG.Bot.Modules
 
     [Command("player")]
     [Summary("Find any players that want to play a specified game")]
-    public async Task Plays([Remainder] string game)
+    public async Task Player([Remainder] string game)
     {
       var results = await _bgg.Search(game);
       var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
@@ -93,6 +93,28 @@ namespace BGG.Bot.Modules
       {
         message = new StringBuilder()
           .AppendLine($"Found {result.Count} potential player(s) for {selection.Result.Name.Value}:")
+          .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
+          .ToString();
+      }
+
+      await ReplyAsync(message);
+    }
+
+    [Command("played")]
+    [Summary("Find any players that have played a specified game")]
+    public async Task Played([Remainder] string game)
+    {
+      var results = await _bgg.Search(game);
+      var selection = await SelectResult(results.ToIndexedResults(), true, ir => $"{ir.Index}) {ir.Result.Name.Value}");
+
+      var result = (await _collectionService.FindPlayed(selection.Result.Id)).GroupBy(u => u.DiscordId).Select(g => g.Key).ToList();
+
+      var message = "Found no previous players";
+
+      if (result.Any())
+      {
+        message = new StringBuilder()
+          .AppendLine($"Found {result.Count} previous player(s) for {selection.Result.Name.Value}:")
           .AppendJoin(Environment.NewLine, result.Select(r => $"<@{r}>"))
           .ToString();
       }

@@ -23,14 +23,17 @@ namespace BGG.Bot.Core.Profiles
         .ForMember(dest => dest.WishList, opt => opt.MapFrom(src => src.CollectionItemStatus.Wishlist))
         .ForMember(dest => dest.WishlistPriority, opt => opt.MapFrom(src => src.CollectionItemStatus.WishlistPriority))
         .ForMember(dest => dest.PreOrdered, opt => opt.MapFrom(src => src.CollectionItemStatus.Preordered))
-        //.ForMember(dest => dest.Rating, opt => opt.ConvertUsing(new FloatTypeConverter(), src => src.BggCollectionItemStats.Rating.Value))
-        //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => Convert.ToDateTime(src.CollectionItemStatus.LastModified)))
         .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.BggCollectionItemStats.Rating.Value))
         .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.CollectionItemStatus.LastModified))
         ;
 
+      CreateMap<BggCollectionItem, UserPlayedItem>()
+        .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.BggCollectionItemStats.Rating.Value))
+        ;
+
       CreateMap<string, float>().ConvertUsing<FloatTypeConverter>();
       CreateMap<string, DateTime>().ConvertUsing(s => Convert.ToDateTime(s));
+      CreateMap<string, bool>().ConvertUsing<BoolTypeConverter>();
     }
   }
 
@@ -39,6 +42,15 @@ namespace BGG.Bot.Core.Profiles
     public float Convert(string source, float destination, ResolutionContext context)
     {
       return float.TryParse(source, out float parsed) ? parsed : default;
+    }
+  }
+
+  public class BoolTypeConverter : ITypeConverter<string, bool>
+  {
+    public bool Convert(string source, bool destination, ResolutionContext context)
+    {
+      if (string.IsNullOrEmpty(source)) return false;
+      return source == "1";
     }
   }
 }

@@ -57,14 +57,27 @@ namespace BGG.Bot.Core.Services
       return results.Things?[0] ?? null;
     }
 
-    public async Task<BggCollection> GetBggCollectionAsync(string username)
+    public async Task<BggCollection> GetBggCollectionAsync(string username, bool? own = null, bool? rated = null, bool? played = null, bool? comment = null, bool? trade = null,
+      bool? want = null, bool? wishlist = null, bool? preordered = null, bool? wantToPlay = null, bool? wantToBuy = null, bool? prevOwned = null)
     {
-      var queryParams = new Dictionary<string, string>() 
-      { 
+      var queryParams = new Dictionary<string, string>()
+      {
         { "username", username }, 
-        //{ "excludesubtype", "boardgameexpansion" }, 
-        { "stats", "1" } 
+        { "stats", "1" },
       };
+
+      if (own != null) queryParams.Add("own", (bool)own ? "1" : "0");
+      if (rated != null) queryParams.Add("rated", (bool)rated ? "1" : "0");
+      if (played != null) queryParams.Add("played", (bool)played ? "1" : "0");
+      if (comment != null) queryParams.Add("comment", (bool)comment ? "1" : "0" );
+      if (trade != null) queryParams.Add("trade", (bool)trade ? "1" : "0");
+      if (want != null) queryParams.Add("want", (bool)want ? "1" : "0");
+      if (wishlist != null) queryParams.Add("wishlist", (bool)wishlist ? "1" : "0");
+      if (preordered != null) queryParams.Add("preordered", (bool)preordered ? "1" : "0");
+      if (wantToPlay != null) queryParams.Add("wanttoplay", (bool)wantToPlay ? "1" : "0");
+      if (wantToBuy != null) queryParams.Add("wanttobuy", (bool)wantToBuy ? "1" : "0");
+      if (prevOwned != null) queryParams.Add("prevowned", (bool)prevOwned ? "1" : "0");
+
       var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/collection", queryParams));
 
       var response = await _httpClient.GetStreamAsync(url);
