@@ -59,25 +59,8 @@ namespace BGG.Bot.Core.Services
       return results.Things?[0] ?? null;
     }
 
-    //public async Task<BggCollection> GetBggCollectionAsync(string username)
-    //{
-    //  var queryParams = new Dictionary<string, string>() 
-    //  { 
-    //    { "username", username }, 
-    //    //{ "excludesubtype", "boardgameexpansion" }, 
-    //    { "stats", "1" } 
-    //  };
-    //  var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/collection", queryParams));
-
-    //  var response = await _httpClient.GetStreamAsync(url);
-    //  var serializer = new XmlSerializer(typeof(BggCollection));
-
-    //  var result = serializer.Deserialize(response) as BggCollection;
-    //  return result;
-    //}
-
-    public async Task<BggCollection> GetBggCollectionAsync(string username, bool own = false, bool rated = false, bool played = false, bool comment = false, bool trade = false,
-      bool want = false, bool wishlist = false, bool preordered = false, bool wantToPlay = false, bool wantToBuy = false, bool prevOwned = false)
+    public async Task<BggCollection> GetBggCollectionAsync(string username, bool? own = null, bool? rated = null, bool? played = null, bool? comment = null, bool? trade = null,
+      bool? want = null, bool? wishlist = null, bool? preordered = null, bool? wantToPlay = null, bool? wantToBuy = null, bool? prevOwned = null)
     {
       var queryParams = new Dictionary<string, string>()
       {
@@ -85,17 +68,17 @@ namespace BGG.Bot.Core.Services
         { "stats", "1" },
       };
 
-      if (own) queryParams.Add("own", "1");
-      if (rated) queryParams.Add("rated", "1");
-      if (played) queryParams.Add("played", "1");
-      if (comment) queryParams.Add("comment", "1" );
-      if (trade) queryParams.Add("trade", "1");
-      if (want) queryParams.Add("want", "1");
-      if (wishlist) queryParams.Add("wishlist", "1");
-      if (preordered) queryParams.Add("preordered", "1");
-      if (wantToPlay) queryParams.Add("wanttoplay", "1");
-      if (wantToBuy) queryParams.Add("wanttobuy", "1");
-      if (prevOwned) queryParams.Add("prevowned", "1");
+      if (own != null) queryParams.Add("own", (bool)own ? "1" : "0");
+      if (rated != null) queryParams.Add("rated", (bool)rated ? "1" : "0");
+      if (played != null) queryParams.Add("played", (bool)played ? "1" : "0");
+      if (comment != null) queryParams.Add("comment", (bool)comment ? "1" : "0" );
+      if (trade != null) queryParams.Add("trade", (bool)trade ? "1" : "0");
+      if (want != null) queryParams.Add("want", (bool)want ? "1" : "0");
+      if (wishlist != null) queryParams.Add("wishlist", (bool)wishlist ? "1" : "0");
+      if (preordered != null) queryParams.Add("preordered", (bool)preordered ? "1" : "0");
+      if (wantToPlay != null) queryParams.Add("wanttoplay", (bool)wantToPlay ? "1" : "0");
+      if (wantToBuy != null) queryParams.Add("wanttobuy", (bool)wantToBuy ? "1" : "0");
+      if (prevOwned != null) queryParams.Add("prevowned", (bool)prevOwned ? "1" : "0");
 
       var url = new Uri(QueryHelpers.AddQueryString(@"https://www.boardgamegeek.com/xmlapi2/collection", queryParams));
 
