@@ -45,8 +45,6 @@ namespace BGG.Bot.Core.Services
       return results.Items.ToList();
     }
 
-
-
     public async Task<Thing> GetThing(int id)
     {
       var queryParams = new Dictionary<string, string>() { { "id", id.ToString() } };

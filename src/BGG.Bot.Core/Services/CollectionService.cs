@@ -30,38 +30,6 @@ namespace BGG.Bot.Core.Services
       _mapper = mapper;
     }
 
-    public async Task<CommandResult> Register(ulong discordId, string bggUsername)
-    {
-      if (await _collectionContext.Users.AnyAsync(u => u.BggUsername == bggUsername))
-      {
-        return new CommandResult(false, $"{bggUsername} has already been registered");
-      }
-
-      if (!await _bgg.ValidUser(bggUsername))
-      {
-        return new CommandResult(false, $"{bggUsername} is not a valid BGG username");
-      }
-
-      var newUser = new User { DiscordId = discordId, BggUsername = bggUsername };
-      var user = await _collectionContext.Users.AddAsync(newUser);
-      await _collectionContext.SaveChangesAsync();
-
-      return await UpdateCollection(discordId, bggUsername);
-    }
-
-    public async Task<CommandResult> Unregister(ulong discordId, string bggUsername)
-    {
-      var registeredCollection = await _collectionContext.Users.FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
-      if (registeredCollection == null)
-      {
-        return new CommandResult(false, $"{bggUsername} is not currently registered");
-      }
-
-      _collectionContext.Remove(registeredCollection);
-      await _collectionContext.SaveChangesAsync();
-      return new CommandResult(true, $"Successfully unregistered {bggUsername}");
-    }
-
     public async Task<CommandResult> UpdateCollection(ulong discordId, string bggUsername)
     {
       var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
@@ -91,7 +59,7 @@ namespace BGG.Bot.Core.Services
 
     public async Task<CommandResult> UpdatePlayedGames(ulong discordId, string bggUsername)
     {
-      var registeredUser = await _collectionContext.Users.Include(u => u.UserCollectionItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
+      var registeredUser = await _collectionContext.Users.Include(u => u.UserPlayedItems).FirstOrDefaultAsync(u => u.DiscordId == discordId && u.BggUsername == bggUsername);
       if (registeredUser == null)
       {
         return new CommandResult(false, $"{bggUsername} is not currently registered");
@@ -107,16 +75,22 @@ namespace BGG.Bot.Core.Services
       var userPlayedItems = _mapper.Map<List<UserPlayedItem>>(playedGames.BggCollectionItems.Unique());
 
       _collectionContext.UserPlayedItems.RemoveRange(registeredUser.UserPlayedItems ?? Enumerable.Empty<UserPlayedItem>());
+      await _collectionContext.SaveChangesAsync();
+
       registeredUser.UserPlayedItems = userPlayedItems;
       _collectionContext.Users.Update(registeredUser);
-
       await _collectionContext.SaveChangesAsync();
+
       return new CommandResult(true, $"Successfully updated plays for {registeredUser.BggUsername} - {registeredUser.UserCollectionItems.Count} total games");
     }
 
     public async Task<List<User>> GetCollections()
     {
-      return await _collectionContext.Users.OrderBy(u => u.BggUsername).ToListAsync();
+      return await _collectionContext.Users
+        .Include(u => u.UserCollectionItems)
+        .Include(u => u.UserPlayedItems)
+        .OrderBy(u => u.BggUsername)
+        .ToListAsync();
     }
 
     public async Task AddMissingGames(IEnumerable<BggCollectionItem> bggItems)
@@ -130,12 +104,12 @@ namespace BGG.Bot.Core.Services
 
     public async Task<List<User>> FindOwners(int bggId)
     {
-     return await _collectionContext.Items
-        .Include(ci => ci.UserCollectionItems)
-        .ThenInclude(uci => uci.User)
-        .Where(ci => ci.BggId == bggId)
-        .SelectMany(ci => ci.UserCollectionItems.Where(uci => uci.Owned).Select(uci => uci.User))
-        .ToListAsync();
+      return await _collectionContext.Items
+         .Include(ci => ci.UserCollectionItems)
+         .ThenInclude(uci => uci.User)
+         .Where(ci => ci.BggId == bggId)
+         .SelectMany(ci => ci.UserCollectionItems.Where(uci => uci.Owned).Select(uci => uci.User))
+         .ToListAsync();
     }
 
     public async Task<List<User>> FindPlayers(int bggId)
