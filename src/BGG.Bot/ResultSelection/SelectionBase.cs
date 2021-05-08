@@ -32,7 +32,7 @@ namespace BGG.Bot.ResultSelection
 
       while (!(selectionMade || selectionCancelled))
       {
-        var reply = await NextMessageAsync();
+        var reply = await NextMessageAsync(timeout: TimeSpan.FromSeconds(60));
         if (reply != null)
         {
           messagesToDelete.Add(reply);
