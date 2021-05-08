@@ -12,7 +12,7 @@ namespace BGG.Bot.Data.Models
     public int UserId { get; set; }
     public User User { get; set; }
     public int BggId{ get; set; }
-    public CollectionItem CollectionItem { get; set; }
+    public Item Item { get; set; }
     public bool Owned { get; set; } = false;
     public bool PreviouslyOwned { get; set; } = false;
     public bool ForTrade { get; set; } = false;

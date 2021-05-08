@@ -10,23 +10,32 @@ namespace BGG.Bot.Core.Models.Collection
 	public class BggCollectionItemStatus
 	{
 		[XmlAttribute("own")]
-		public bool Own { get; set; }
+		public string Own { get; set; }
+
 		[XmlAttribute("prevowned")]
-		public bool PreviouslyOwned { get; set; }
+		public string PreviouslyOwned { get; set; }
+
 		[XmlAttribute("fortrade")]
-		public bool ForTrade { get; set; }
+		public string ForTrade { get; set; }
+
 		[XmlAttribute("want")]
-		public bool Want { get; set; }
+		public string Want { get; set; }
+
 		[XmlAttribute("wanttoplay")]
-		public bool WantToPlay { get; set; }
+		public string WantToPlay { get; set; }
+
 		[XmlAttribute("wanttobuy")]
-		public bool WantToBuy { get; set; }
+		public string WantToBuy { get; set; }
+
 		[XmlAttribute("wishlist")]
-		public bool Wishlist { get; set; }
+		public string Wishlist { get; set; }
+
 		[XmlAttribute("wishlistpriority")]
 		public int WishlistPriority { get; set; } = 0;
+
 		[XmlAttribute("preordered")]
-		public bool Preordered { get; set; }
+		public string Preordered { get; set; }
+
 		[XmlAttribute("lastmodified")]
 		public string LastModified { get; set; }
 	}

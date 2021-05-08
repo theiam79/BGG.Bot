@@ -12,5 +12,6 @@ namespace BGG.Bot.Data.Models
     public ulong DiscordId { get; set; }
     public string BggUsername { get; set; }
     public ICollection<UserCollectionItem> UserCollectionItems { get; set; }
+    public ICollection<UserPlayedItem> UserPlayedItems { get; set; }
   }
 }

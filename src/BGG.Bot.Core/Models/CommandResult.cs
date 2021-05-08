@@ -11,7 +11,7 @@ namespace BGG.Bot.Core.Models
     public bool Success { get; set; }
     public string Message { get; set; }
 
-    public CommandResult(bool success, string message)
+    public CommandResult(bool success, string message = "")
     {
       Success = success;
       Message = message;
